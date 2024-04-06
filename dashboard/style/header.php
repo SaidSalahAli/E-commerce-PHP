@@ -1,6 +1,5 @@
 <?php 
 session_start();
-
 if (!isset($_SESSION["login"])){
     header("Location:login.php");
 }
@@ -62,7 +61,7 @@ include "functions/connect.php";
                     aria-haspopup="true" aria-expanded="false">
                     <i class="fas fa-bell fa-fw"></i>
                     <span class="badge badge-danger num_rows">
-                        <?= $con->query("SELECT * FROM `messages` WHERE status='0'")->num_rows;?>+
+                        9+
                     </span>
                 </a>
                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="alertsDropdown">

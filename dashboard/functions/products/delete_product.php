@@ -2,7 +2,7 @@
 include "../connect.php";
 $id = $_GET['id'];
 
-$name_old_img = $con->query("SELECT img FROM products WHERE id ='$id'")->fetch_assoc()["img"];
+$name_old_img = $con->query("SELECT images FROM products WHERE id ='$id'")->fetch_assoc()["images"];
 
 $delete = $con->query("DELETE FROM `products` WHERE id='$id' ");
 

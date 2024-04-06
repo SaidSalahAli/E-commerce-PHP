@@ -1,56 +1,54 @@
 <?php
 
 include "../connect.php";
-$id = $_POST['id'];
-$old_img = $_POST['old_img'];
+$id_edite = $_POST["id"];
+$old_img = $_POST["old_img"];
 $name = $_POST['name'];
+$category = $_POST['category'];
 $price = $_POST['price'];
 $sale = $_POST['sale'];
-$count = $_POST['count'];
-$category = $_POST['category'];
-$img = $_FILES['img']['name'];
+$description = $_POST['description'];
+$quantity = $_POST['quantity'];
+$stars = $_POST['stars'];
 
-// $pas_hash = password_hash($password, PASSWORD_DEFAULT);
+$locations ='../../images/';
 
-if (empty($img)){
-     $update = $con->query("UPDATE `products` SET 
-    `name`='$name', `price`='$price', `sale`='$sale', `count`='$count',`category`='$category' WHERE `id`='$id'");
+$image_names = []; // Array to hold uploaded file names
+
+if (!empty($_FILES['images']['name'])) {
+    $file_count = count($_FILES['images']['name']);
     
+    // Loop through each uploaded file
+    for ($i = 0; $i < $file_count; $i++) {
+        $original_image_name = $_FILES['images']['name'][$i];
+        echo''. $original_image_name .'<br>';
+        $file_extension = pathinfo($original_image_name, PATHINFO_EXTENSION);
+        // Generate a unique filename
+        $unique_image_name = uniqid() . '_' . $i . '.' . $file_extension;
+        $targetPath = $locations . $unique_image_name;
+        move_uploaded_file($_FILES['images']['tmp_name'][$i], $targetPath);
+        $image_names[] = $unique_image_name; // Store unique filename in array
+    }
+
+    $image_names_str = implode(',', $image_names); // Convert array to comma-separated string
+    echo $image_names_str.'<br>';
+
+    // Update query syntax correction and missing field replacement
+    $update_query = "UPDATE `products` SET id= `name`='$name', `category`='$category', `price`='$price', `sale`='$sale', `description`='$description', `quantity`='$quantity', `images`='$image_names_str', `stars`='$stars' WHERE id='$id_edite'";
+
+    $update = $con->query($update_query);
+
     if ($update) {
-        header("location:../../products.php?ms=success edite product");
+        // echo "yes";
+        // Remove old image
+        unlink("../../images/$old_img");
+        header("location:../../products.php?ms=Success add products");
+    } else {
+        // echo "no";
+        header("location:../../products.php?products=add&ms=Failed to add products");
     }
-}else{
-    if ($_FILES['img']['error'] == 0){
-        $ex_img = pathinfo($img,PATHINFO_EXTENSION);
-        $ex =['jpg','png','gif','jfg'];
-          if (in_array($ex_img,$ex)){
-            
-    
-            if($_FILES['img']['size'] <= 500000){
-            $new_name = md5(uniqid()).".".$ex_img;
-    
-            move_uploaded_file($_FILES["img"]["tmp_name"],"../../images/$new_name");
-            // echo"".$new_name."";
-            $update = $con->query("UPDATE `products` SET 
-            `name`='$name', `price`='$price', `sale`='$sale', `count`='$count',`category`='$category',`img`='$img'
-             WHERE `id`='$id'");
-            
-            if ($update){
-                unlink("../../images/$old_img");
-                header("location:../../products.php?ms=Success add products");
-            }else{
-                header("location:../../products.php?products=add&ms=Success add products");
-    
-            }
-    
-     }else{
-      header("location:../../products.php?products=add&ms=Success add products");
-     }
-    
-     }
-    }
+} else {
+    echo "no";
 }
-
- 
 
 ?>
