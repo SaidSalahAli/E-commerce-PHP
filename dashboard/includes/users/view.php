@@ -20,6 +20,7 @@
         <?php
        $all_users = $con->query("SELECT * FROM users");
        foreach($all_users as $key => $user):
+        print_r($user);
        ?>
         <tr>
             <th scope="row"><?php  echo ++$key?></th>

@@ -40,8 +40,8 @@ $user = $con->query("SELECT id,name,email,gender,prive FROM users WHERE id='$id_
     <div class="form-group">
         <label for="exampleFormControlSelect1">Access</label>
         <select name="prive" class="form-control" id="exampleFormControlSelect1">
-            <option <?php echo $user['gender']== 1?"selected":""?> selected>Admin</option>
-            <option <?php echo $user['gender']== 0?"selected":""?>>User</option>
+            <option <?php echo $user['prive']>= 1?"selected":""?> selected>Admin</option>
+            <option <?php echo $user['prive']== 0?"selected":""?>>User</option>
 
         </select>
     </div>

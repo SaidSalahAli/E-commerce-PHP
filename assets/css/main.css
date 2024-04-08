@@ -10,6 +10,11 @@ body {
   overflow-x: hidden;
   font-size: 14px;
 }
+.error {
+  border-color: red;
+  background-color: #000;
+}
+
 p {
   margin: 0;
   padding: 0;
@@ -1139,7 +1144,7 @@ ol {
 }
 .header .topbar {
   background-color: #081828;
-  padding: 18px 0;
+  padding: 18px;
 }
 @media (max-width: 767px) {
   .header .topbar .top-left {
@@ -6157,6 +6162,9 @@ blockquote span {
 .register-form .form-group label {
   display: block;
   margin-bottom: 8px;
+}
+.register-form .form-group .form-control {
+  border: 1px solid #e0e0e0;
 }
 .register-form .form-group .form-control {
   padding: 0 18px;

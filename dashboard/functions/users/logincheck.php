@@ -13,8 +13,13 @@ $pas_hash = $date["password"];
 $num_email =$user->num_rows;
 if ($num_email >0){
     if(password_verify($password,$pas_hash)){
-     $_SESSION["login"] = $date;
-     header("Location:../../index.php");
+     if ($date["prive"] > 0 || $date["prive"] == null){
+        $_SESSION["login"] = $date;
+        header("Location:../../index.php");
+     }else{
+     header("Location:../../login.php?ms=You not admin");
+
+     }
  
     }else{
      header("Location:../../login.php?ms=Your Passord or Email incorrect");
