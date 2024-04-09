@@ -7,6 +7,13 @@ if (isset($_SESSION["login_users"]) && !empty($_SESSION["login_users"])){
     $data = $_SESSION["login_users"];
 }
 
+$count_query = "SELECT COUNT(*) AS total FROM cart";
+$result = $con->query($count_query);
+$row = $result->fetch_assoc();
+
+// الحصول على العدد الكلي للمنتجات في السلة
+$total_products = $row['total'];
+
 // print_r(json_encode($data));
 
 ?>
@@ -176,7 +183,7 @@ if (isset($_SESSION["login_users"]) && !empty($_SESSION["login_users"])){
                                 <div class="cart-items">
                                     <a href="javascript:void(0)" class="main-btn">
                                         <i class="lni lni-cart"></i>
-                                        <span class="total-items">2</span>
+                                        <span class="total-items"><?php echo $total_products; ?></span>
                                     </a>
 
                                     <div class="shopping-item">
@@ -189,7 +196,7 @@ if (isset($_SESSION["login_users"]) && !empty($_SESSION["login_users"])){
                                                 <a href="javascript:void(0)" class="remove" title="Remove this item"><i
                                                         class="lni lni-close"></i></a>
                                                 <div class="cart-img-head">
-                                                    <a class="cart-img" href="product-details.html"><img
+                                                    <a class="cart-img" href="product-details."><img
                                                             src="assets/images/header/cart-items/item1.jpg"
                                                             alt="#" /></a>
                                                 </div>

@@ -1,5 +1,33 @@
-<?php include "style/header.php"?>
+<?php include "style/header.php";
 
+$messages=[];
+
+if(isset($_POST["add_to_cart"])  ){
+$product_name = $_POST["product_name"];
+$product_price = $_POST["product_price"];
+$product_image = $_POST["product_image"];
+
+$product_quntity = 1;
+
+
+
+$select_cart = $con->query("SELECT * FROM `cart` WHERE name = '$product_name'")->num_rows;
+if($select_cart > 0){
+    $messages[] ='prodect already add to cart';
+}else{
+    $insart_product = $con->query("INSERT INTO `cart`(`name`, `price`, `image`, `quantity`) 
+    VALUES ('$product_name','$product_price','$product_image','$product_quntity')");
+    $messages[] ='prodect added to cart succesfull!';
+
+}
+
+
+}
+
+?>
+<?php foreach($messages as$message):?>
+<h1><?php echo $message ?></h1>
+<?php endforeach?>
 <section class="hero-area">
     <div class="container">
         <div class="row">
@@ -206,47 +234,57 @@
           $all_product =$con->query("SELECT * FROM `products`");
           foreach($all_product as $product):
           ?>
+
             <div class="col-lg-3 col-md-6 col-12">
-                <div class="single-product">
-                    <div class="product-image " style="hight: 150px">
-                        <?php
-            // Split the images string into an array of filenames
-            $images = explode(',', $product['images']);
-            // Display the first image
-            ?>
-                        <img src="dashboard/images/<?php echo $images[0] ?>" alt="#" />
-                        <div class="button">
-                            <a href="product-details.php?id=<?php echo $product['id'] ?>" class="btn"><i
-                                    class="lni lni-cart"></i> Add to Cart</a>
-                        </div>
-                    </div>
-                    <div class="product-info">
-                        <span class="category"></span>
-                        <h4 class="title">
-                            <a href="product-grids.html"><?php echo $product['name']?></a>
-                        </h4>
-                        <ul class="review">
+                <form action="" method="POST">
+                    <input type="hidden" name="product_name" value="<?php echo $product['name'] ?>">
+                    <input type="hidden" name="product_price" value="<?php echo $product['price'] ?>">
+                    <div class="single-product">
+                        <div class="product-image " style="hight: 150px">
                             <?php
-                // Display filled stars based on the number of stars
-                $filledStars = intval($product['stars']);
-                
-                for ($i = 0; $i < $filledStars; $i++) {
-                    echo '<li><i class="lni lni-star-filled"></i></li>';
-                }
-                // Display empty stars for the remaining
-                $emptyStars = 5 - $filledStars;
-                for ($i = 0; $i < $emptyStars; $i++) {
-                    echo '<li><i class="lni lni-star"></i></li>';
-                }
-                ?>
-                            <li><span><?php echo $product['stars']?>.0 Review(s)</span></li>
-                        </ul>
-                        <div class="price">
-                            <span>$<?php echo $product['price']?>.00</span>
+                            // Split the images string into an array of filenames
+                            $images = explode(',', $product['images']);
+                            // Display the first image
+                        ?>
+                            <input type="hidden" name="product_image" value="<?php echo $images[0] ?>">
+                            <img src="dashboard/images/<?php echo $images[0] ?>" alt="#" />
+                            <div class="button">
+                                <button type="submit" name="add_to_cart" class="btn"><i class="lni lni-cart"></i> Add to
+                                    Cart</button>
+                            </div>
                         </div>
+                        <div class="product-info">
+                            <span class="category"></span>
+                            <h4 class="title">
+                                <a
+                                    href="product-details.php?id=<?php echo $product['id'] ?>"><?php echo $product['name']?></a>
+                            </h4>
+                            <ul class="review">
+                                <?php
+                                    // Display filled stars based on the number of stars
+                                    $filledStars = intval($product['stars']);
+                                    
+                                    for ($i = 0; $i < $filledStars; $i++) {
+                                        echo '<li><i class="lni lni-star-filled"></i></li>';
+                                    }
+                                    // Display empty stars for the remaining
+                                    $emptyStars = 5 - $filledStars;
+                                    for ($i = 0; $i < $emptyStars; $i++) {
+                                        echo '<li><i class="lni lni-star"></i></li>';
+                                    }
+                                    ?>
+                                <li><span><?php echo $product['stars']?>.0 Review(s)</span></li>
+                            </ul>
+                            <div class="price">
+                                <span>$<?php echo $product['price']?>.00</span>
+                            </div>
+                        </div>
+
                     </div>
-                </div>
+                </form>
             </div>
+
+
             <?php endforeach?>
         </div>
     </div>
