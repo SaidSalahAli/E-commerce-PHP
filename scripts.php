@@ -1,4 +1,24 @@
 <script>
+$('.search').on('input', function() {
+    let search = $(this).val(); // القيمة المدخلة في حقل البحث
+    let category = '<?php echo $name_category; ?>'; // قيمة الفئة المحددة
+
+    // إرسال البيانات إلى صفحة PHP باستخدام AJAX
+    $.ajax({
+        url: 'product-grids.php', // المسار إلى صفحة PHP لمعالجة البحث
+        type: 'GET',
+        data: {
+            search: search,
+            category: category
+        }, // البيانات المرسلة: قيمة البحث والفئة
+        success: function(response) {
+            // يمكنك تحديث العرض بناءً على الاستجابة التي تم استردادها من صفحة PHP
+            // على سبيل المثال:
+            $('.product-grid').html(response); // قم بتحديث العنصر الذي يعرض المنتجات
+        }
+    });
+});
+
 $('.send_register').submit(function(e) {
     e.preventDefault();
     let first_name = $('.first_name').val();
@@ -68,7 +88,8 @@ $('.send_register').submit(function(e) {
             // Show error message for password length
             $('.password').addClass('error').removeClass('form-control');
             $('.confirm_password').addClass('error').removeClass('form-control');
-            $('.password').next('.error-message').text('Password must be at least 8 characters long')
+            $('.password').next('.error-message').text(
+                    'Password must be at least 8 characters long')
                 .show();
             $('.confirm_password').next('.error-message').text(
                 'Password must be at least 8 characters long').show();
@@ -99,7 +120,12 @@ $('.send_register').submit(function(e) {
             }))
     }
     // Check if passwords match
-
-
 });
+
+
+$('.add_to_cart').click(function() {
+    toastr.info('Are you the 6 fingered man?')
+
+
+})
 </script>

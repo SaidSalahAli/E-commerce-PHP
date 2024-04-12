@@ -2,4 +2,4 @@
 session_start();
 session_destroy();
 session_unset();
-header("location:../login.php?loguot=Loguot is success");
+header("location:../login.php?ms=Loguot is success");

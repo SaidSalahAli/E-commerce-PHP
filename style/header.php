@@ -3,22 +3,31 @@ session_start();
 
 
 include "functions/connect.php";
+$user_id = null;
 if (isset($_SESSION["login_users"]) && !empty($_SESSION["login_users"])){
     $data = $_SESSION["login_users"];
+    $user_id =$data['id'];
 }
 
-$count_query = "SELECT COUNT(*) AS total FROM cart";
-$result = $con->query($count_query);
-$row = $result->fetch_assoc();
+$count_query =$con->query("SELECT * FROM cart WHERE user_id ='$user_id'") or die('query feiled') ;
+// $resu
+$total_products = mysqli_num_rows( $count_query ) ;
 
-// الحصول على العدد الكلي للمنتجات في السلة
-$total_products = $row['total'];
 
-// print_r(json_encode($data));
+
+$all_categories_query = $con->query("SELECT DISTINCT category FROM products") or die('query failed');
+$all_categories = array(); 
+
+while ($row = $all_categories_query->fetch_assoc()) {
+    $all_categories[] = $row['category'];
+}
+
+
+
 
 ?>
 <!DOCTYPE html>
-<html class="no-js" lang="zxx">
+<html>
 
 <head>
     <meta charset="utf-8" />
@@ -27,7 +36,7 @@ $total_products = $row['total'];
         Single Product - ShopGrids Bootstrap 5 eCommerce HTML Template.
     </title>
     <meta name="description" content="" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- <meta name="viewport" content="width=device-width, initial-scale=1" /> -->
     <link rel="shortcut icon" type="image/x-icon" href="assets/images/favicon.svg" />
     <link rel="stylesheet" href="assets/css/main.css" />
     <link rel="stylesheet" href="assets/css/style.css">
@@ -36,7 +45,7 @@ $total_products = $row['total'];
     <link rel="stylesheet" href="assets/css/tiny-slider.css" />
     <link rel="stylesheet" href="assets/css/glightbox.min.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css"
-        integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
+        crossorigin="anonymous">
 
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
         integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous">
@@ -44,17 +53,20 @@ $total_products = $row['total'];
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"
         integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous">
     </script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.min.js"
-        integrity="sha384-w1Q4orYjBQndcko6MimVbzY0tgp4pWB4lZ7lr30WKz0vr/aWKhXdBNmNb5D92v7s" crossorigin="anonymous">
-    </script>
-
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"
         integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
 </head>
 
 
 <body>
-
+    <!-- <div class="preloader">
+        <div class="preloader-inner">
+            <div class="preloader-icon">
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </div> -->
     <header class="header navbar-area">
         <div class="topbar">
             <div class="container">
@@ -188,50 +200,58 @@ $total_products = $row['total'];
 
                                     <div class="shopping-item">
                                         <div class="dropdown-cart-header">
-                                            <span>2 Items</span>
-                                            <a href="cart.html">View Cart</a>
+                                            <span><?php echo $total_products; ?></span>
+                                            <a href="cart.php">View Cart</a>
                                         </div>
                                         <ul class="shopping-list">
+                                            <?php
+                                             $total_price = 0;
+                                           // لام لاسترداد السجلات كمصفوفة
+                                            $cart_query = $con->query("SELECT * FROM `cart` WHERE user_id ='$user_id'");
+                                            
+                                            if ($cart_query) {
+                                                // التأكد من أن النتائج غير فارغة
+                                                if ($cart_query->num_rows > 0) {
+                                                    // حلقة foreach لعرض كل سجل في النتائج
+                                                    while ($cart_item = $cart_query->fetch_assoc()) {   
+                                                        $total_price += $cart_item["price"];                                                             
+                                             ?>
                                             <li>
-                                                <a href="javascript:void(0)" class="remove" title="Remove this item"><i
+                                                <a href="functions/cart/delete_product.php?id=<?php echo $cart_item["id"]?>"
+                                                    class="remove" title="Remove this item"><i
                                                         class="lni lni-close"></i></a>
+
                                                 <div class="cart-img-head">
-                                                    <a class="cart-img" href="product-details."><img
-                                                            src="assets/images/header/cart-items/item1.jpg"
+                                                    <a class="cart-img" href="product-details.php"><img
+                                                            src="dashboard/images/<?php echo $cart_item["image"]?>"
                                                             alt="#" /></a>
                                                 </div>
                                                 <div class="content">
                                                     <h4>
-                                                        <a href="product-details.html">
-                                                            Apple Watch Series 6</a>
+                                                        <a href="product-details.php?id=<?php echo $cart_item["id"]?>">
+                                                            <?php echo $cart_item["name"]?>
+                                                        </a>
                                                     </h4>
                                                     <p class="quantity">
-                                                        1x - <span class="amount">$99.00</span>
+                                                        <?php echo $cart_item["quantity"]?><span
+                                                            class="amount">$<?php echo $cart_item["price"]?></span>
                                                     </p>
                                                 </div>
                                             </li>
-                                            <li>
-                                                <a href="javascript:void(0)" class="remove" title="Remove this item"><i
-                                                        class="lni lni-close"></i></a>
-                                                <div class="cart-img-head">
-                                                    <a class="cart-img" href="product-details.html"><img
-                                                            src="assets/images/header/cart-items/item2.jpg"
-                                                            alt="#" /></a>
-                                                </div>
-                                                <div class="content">
-                                                    <h4>
-                                                        <a href="product-details.html">Wi-Fi Smart Camera</a>
-                                                    </h4>
-                                                    <p class="quantity">
-                                                        1x - <span class="amount">$35.00</span>
-                                                    </p>
-                                                </div>
-                                            </li>
+                                            <?php
+                                                   }
+                                                } else {
+                                                
+                                                    echo "No items in cart";
+                                                }
+                                            } else {                                              echo "Error executing query: " . $con->error;
+                                                 } 
+                                             ?>
                                         </ul>
                                         <div class="bottom">
                                             <div class="total">
                                                 <span>Total</span>
-                                                <span class="total-amount">$134.00</span>
+                                                <span class="total-amount">$<?php echo $total_price?></span>
                                             </div>
                                             <div class="button">
                                                 <a href="checkout.html" class="btn animate">Checkout</a>
@@ -253,34 +273,18 @@ $total_products = $row['total'];
                         <div class="mega-category-menu">
                             <span class="cat-button"><i class="lni lni-menu"></i>All Categories</span>
                             <ul class="sub-category">
-                                <li>
-                                    <a href="product-grids.html">Electronics <i class="lni lni-chevron-right"></i></a>
-                                    <ul class="inner-sub-category">
-                                        <li><a href="product-grids.html">Digital Cameras</a></li>
-                                        <li><a href="product-grids.html">Camcorders</a></li>
-                                        <li><a href="product-grids.html">Camera Drones</a></li>
-                                        <li><a href="product-grids.html">Smart Watches</a></li>
-                                        <li><a href="product-grids.html">Headphones</a></li>
-                                        <li><a href="product-grids.html">MP3 Players</a></li>
-                                        <li><a href="product-grids.html">Microphones</a></li>
-                                        <li><a href="product-grids.html">Chargers</a></li>
-                                        <li><a href="product-grids.html">Batteries</a></li>
-                                        <li>
-                                            <a href="product-grids.html">Cables & Adapters</a>
-                                        </li>
-                                    </ul>
+                                <?php 
+                                    foreach ($all_categories as $category) :
+                           
+                                   
+                                    
+                                    
+                                    ?>
+                                <li><a
+                                        href="product-grids.php?category=<?php echo $category?>"><?php echo $category?></a>
                                 </li>
-                                <li><a href="product-grids.html">accessories</a></li>
-                                <li><a href="product-grids.html">Televisions</a></li>
-                                <li><a href="product-grids.html">best selling</a></li>
-                                <li><a href="product-grids.html">top 100 offer</a></li>
-                                <li><a href="product-grids.html">sunglass</a></li>
-                                <li><a href="product-grids.html">watch</a></li>
-                                <li><a href="product-grids.html">man’s product</a></li>
-                                <li><a href="product-grids.html">Home Audio & Theater</a></li>
-                                <li><a href="product-grids.html">Computers & Tablets </a></li>
-                                <li><a href="product-grids.html">Video Games </a></li>
-                                <li><a href="product-grids.html">Home Appliances </a></li>
+                                <?php endforeach?>
+
                             </ul>
                         </div>
 
@@ -385,23 +389,3 @@ $total_products = $row['total'];
             </div>
         </div>
     </header>
-    <div class="breadcrumbs">
-        <div class="container">
-            <div class="row align-items-center">
-                <div class="col-lg-6 col-md-6 col-12">
-                    <div class="breadcrumbs-content">
-                        <h1 class="page-title">Single Product</h1>
-                    </div>
-                </div>
-                <div class="col-lg-6 col-md-6 col-12">
-                    <ul class="breadcrumb-nav">
-                        <li>
-                            <a href="index-2.html"><i class="lni lni-home"></i> Home</a>
-                        </li>
-                        <li><a href="index-2.html">Shop</a></li>
-                        <li>Single Product</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </div>

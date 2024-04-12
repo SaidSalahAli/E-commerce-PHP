@@ -1,72 +1,135 @@
-<?php
-ob_start(); // بداية التخزين المؤقت للمخرجات
-
-// session_start();
-include "style/header.php";
-
-if (isset($_SESSION["login_users"])){
-    header("Location:index.php");
-    exit; // يجب على البرنامج المصدر القادم من هنا بعد توجيه الرأس
-}
-
-// الإرشاد عندما يكون غير مضمون
-ob_end_flush(); // نهاية التخزين المؤقت للمخرجات
-?>
+<?php include "style/header.php"?>;
 
 
-<div class="account-login section">
+<div class="shopping-cart section">
     <div class="container">
-        <div class="row">
-            <div class="col-lg-6 offset-lg-3 col-md-10 offset-md-1 col-12">
-                <?php if (isset($_GET["ms"])):?>
-                <div class="alert alert-success" role="alert">
-                    <?= $_GET["ms"]?>
+        <div class="cart-list-head">
+
+            <div class="cart-list-title">
+                <div class="row">
+                    <div class="col-lg-1 col-md-1 col-12">
+                    </div>
+                    <div class="col-lg-4 col-md-3 col-12">
+                        <p>Product Name</p>
+                    </div>
+                    <div class="col-lg-2 col-md-2 col-12">
+                        <p>Quantity</p>
+                    </div>
+                    <div class="col-lg-2 col-md-2 col-12">
+                        <p>Subtotal</p>
+                    </div>
+                    <div class="col-lg-2 col-md-2 col-12">
+                        <p>Discount</p>
+                    </div>
+                    <div class="col-lg-1 col-md-2 col-12">
+                        <p>Remove</p>
+                    </div>
                 </div>
-                <?php endif?>
-                <form class="card login-form" method="post" action="functions/logincheck.php">
-                    <div class="card-body">
-                        <div class="title">
-                            <h3>Login Now</h3>
-                            <p>You can login using your social media account or email address.</p>
+            </div>
+            <?php
+                          $total_price = 0;
+                        // لام لاسترداد السجلات كمصفوفة
+                          $cart_query = $con->query("SELECT * FROM `cart`");
+                          
+                           if ($cart_query) {
+                              // التأكد من أن النتائج غير فارغة
+                              if ($cart_query->num_rows > 0) {
+                                  // حلقة foreach لعرض كل سجل في النتائج
+                                 while ($cart_item = $cart_query->fetch_assoc()) {   
+                                      $total_price += $cart_item["price"];                                                             
+                         ?>
+
+            <div class="cart-single-list">
+                <div class="row align-items-center">
+                    <div class="col-lg-1 col-md-1 col-12">
+                        <a href="product-details.html"><img src="dashboard/images/<?php echo $cart_item["image"]?>"
+                                alt="#"></a>
+                    </div>
+                    <div class="col-lg-4 col-md-3 col-12">
+                        <h5 class="product-name"><a href="product-details.php?id=<?php echo $cart_item["id"]?>">
+                                <?php echo $cart_item["name"]?></a></h5>
+                        <p class=" product-des">
+                        </p>
+                    </div>
+                    <div class="col-lg-2 col-md-2 col-12">
+                        <div class="count-input">
+                            <select class="form-control">
+                                <?php 
+                                    // حصل على الكمية المتاحة من المنتج
+                                    $availableQuantity = $cart_item["quantity"];
+                                
+                                    // عرض خيارات الكمية المتاحة
+                                    for($i = 1; $i <= $availableQuantity; $i++) {
+                                        echo "<option value=\"$i\">$i</option>";
+                                    }
+                                
+                                    ?>
+
+                            </select>
                         </div>
-                        <div class="social-login">
-                            <div class="row">
-                                <div class="col-lg-4 col-md-4 col-12"><a class="btn facebook-btn"
-                                        href="javascript:void(0)"><i class="lni lni-facebook-filled"></i> Facebook
-                                        login</a></div>
-                                <div class="col-lg-4 col-md-4 col-12"><a class="btn twitter-btn"
-                                        href="javascript:void(0)"><i class="lni lni-twitter-original"></i> Twitter
-                                        login</a></div>
-                                <div class="col-lg-4 col-md-4 col-12"><a class="btn google-btn"
-                                        href="javascript:void(0)"><i class="lni lni-google"></i> Google login</a>
+                    </div>
+                    <div class="col-lg-2 col-md-2 col-12">
+                        <p>$910.00</p>
+                    </div>
+                    <div class="col-lg-2 col-md-2 col-12">
+                        <p>$<?php echo $cart_item["price"]?></p>
+                    </div>
+                    <div class="col-lg-1 col-md-2 col-12">
+                        <a class="remove-item"
+                            href="functions/cart/delete_product.php?id=<?php echo $cart_item["id"]?>"><i
+                                class="lni lni-close"></i></a>
+                    </div>
+                </div>
+            </div>
+
+            <?php
+                                                   }
+                                                } else {
+                                                    // إذا لم يكن هناك سجلات في جدول السلة
+                                                    echo "No items in cart";
+                                                }
+                                            } else {
+                                                // إذا كان هناك خطأ في الاستعلام
+                                                echo "Error executing query: " . $con->error;
+                                                 } 
+                                             ?>
+
+
+        </div>
+        <div class="row">
+            <div class="col-12">
+
+                <div class="total-amount">
+                    <div class="row">
+                        <div class="col-lg-8 col-md-6 col-12">
+                            <div class="left">
+                                <div class="coupon">
+                                    <form action="#" target="_blank">
+                                        <input name="Coupon" placeholder="Enter Your Coupon">
+                                        <div class="button">
+                                            <button class="btn">Apply Coupon</button>
+                                        </div>
+                                    </form>
                                 </div>
                             </div>
                         </div>
-                        <div class="alt-option">
-                            <span>Or</span>
-                        </div>
-                        <div class="form-group input-group">
-                            <label for="reg-fn">Email</label>
-                            <input class="form-control" type="email" name="email" id="reg-email" required>
-                        </div>
-                        <div class="form-group input-group">
-                            <label for="reg-fn">Password</label>
-                            <input class="form-control" type="password" name="password" id="reg-pass" required>
-                        </div>
-                        <div class="d-flex flex-wrap justify-content-between bottom-content">
-                            <div class="form-check">
-                                <input type="checkbox" class="form-check-input width-auto" id="exampleCheck1">
-                                <label class="form-check-label">Remember me</label>
+                        <div class="col-lg-4 col-md-6 col-12">
+                            <div class="right">
+                                <ul>
+                                    <li>Cart Subtotal<span>$<?php echo $total_price?></span></li>
+                                    <li>Shipping<span>Free</span></li>
+                                    <li>You Save<span>$29.00</span></li>
+                                    <li class="last">You Pay<span>$<?php echo $total_price?></span></li>
+                                </ul>
+                                <div class="button">
+                                    <a href="checkout.php" class="btn">Checkout</a>
+                                    <!-- <a href="product-grids.html" class="btn btn-alt">Continue shopping</a> -->
+                                </div>
                             </div>
-                            <a class="lost-pass" href="account-password-recovery.html">Forgot password?</a>
                         </div>
-                        <div class="button">
-                            <button class="btn" type="submit">Login</button>
-                        </div>
-                        <p class="outer-link">Don't have an account? <a href="register.php">Register here </a>
-                        </p>
                     </div>
-                </form>
+                </div>
+
             </div>
         </div>
     </div>
@@ -123,9 +186,9 @@ ob_end_flush(); // نهاية التخزين المؤقت للمخرجات
                             </ul>
                             <p class="mail">
                                 <a
-                                    href="https://demo.graygrids.com/cdn-cgi/l/email-protection#c4b7b1b4b4abb6b084b7acabb4a3b6ada0b7eaa7aba9"><span
+                                    href="https://demo.graygrids.com/cdn-cgi/l/email-protection#84f7f1f4f4ebf6f0c4f7ecebf4e3f6ede0f7aae7ebe9"><span
                                         class="__cf_email__"
-                                        data-cfemail="5d2e282d2d322f291d2e35322d3a2f34392e733e3230">[email&#160;protected]</span></a>
+                                        data-cfemail="0a797f7a7a65787e4a7962657a6d78636e7924696567">[email&#160;protected]</span></a>
                             </p>
                         </div>
 
@@ -233,6 +296,6 @@ ob_end_flush(); // نهاية التخزين المؤقت للمخرجات
 <script src="assets/js/main.js"></script>
 </body>
 
-<!-- Mirrored from demo.graygrids.com/themes/shopgrids/login.html by HTTrack Website Copier/3.x [XR&CO'2014], Mon, 05 Dec 2022 23:35:59 GMT -->
+<!-- Mirrored from demo.graygrids.com/themes/shopgrids/cart.html by HTTrack Website Copier/3.x [XR&CO'2014], Mon, 05 Dec 2022 23:36:00 GMT -->
 
 </html>

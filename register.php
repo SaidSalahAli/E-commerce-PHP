@@ -1,4 +1,21 @@
-<?php include "style/header.php"?>
+<?php 
+
+
+
+ob_start() ;
+// session_start();
+include "style/header.php";
+
+if (isset($_SESSION["login_users"])){
+    header("Location:index.php");
+    exit; 
+}
+
+
+ob_end_flush(); 
+?>
+
+?>
 
 <div class="breadcrumbs">
     <div class="container">

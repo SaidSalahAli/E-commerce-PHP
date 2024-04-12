@@ -1,28 +1,33 @@
-<?php include "style/header.php";
+<?php 
+include "style/header.php";
+// session_start();
+if (isset($_SESSION["login_users"]) && !empty( $_SESSION["login_users"])){
+$user_id = $_SESSION["login_users"]['id'];
+echo$user_id;
+}
+
+
 
 $messages=[];
 
-if(isset($_POST["add_to_cart"])  ){
-$product_name = $_POST["product_name"];
-$product_price = $_POST["product_price"];
-$product_image = $_POST["product_image"];
 
-$product_quntity = 1;
+$cart_query = $con->query("SELECT * FROM `cart`");
+if ($cart_query) {
 
+    if ($cart_query->num_rows > 0) {
+   
+        while ($cart_item = $cart_query->fetch_assoc()) {
 
+        }
+    } else {
+  
+        echo "No items in cart";
+    }
+} else {
 
-$select_cart = $con->query("SELECT * FROM `cart` WHERE name = '$product_name'")->num_rows;
-if($select_cart > 0){
-    $messages[] ='prodect already add to cart';
-}else{
-    $insart_product = $con->query("INSERT INTO `cart`(`name`, `price`, `image`, `quantity`) 
-    VALUES ('$product_name','$product_price','$product_image','$product_quntity')");
-    $messages[] ='prodect added to cart succesfull!';
-
+    echo "Error executing query: " . $con->error;
 }
 
-
-}
 
 ?>
 <?php foreach($messages as$message):?>
@@ -236,11 +241,13 @@ if($select_cart > 0){
           ?>
 
             <div class="col-lg-3 col-md-6 col-12">
-                <form action="" method="POST">
+                <form action="functions/cart/addToCart.php" class="" method="POST">
                     <input type="hidden" name="product_name" value="<?php echo $product['name'] ?>">
+                    <input type="hidden" name="product_id" value="<?php echo $product['id'] ?>">
+                    <input type="hidden" name="user_id" value="<?php echo $user_id ?>">
                     <input type="hidden" name="product_price" value="<?php echo $product['price'] ?>">
                     <div class="single-product">
-                        <div class="product-image " style="hight: 150px">
+                        <div class="product-image  ">
                             <?php
                             // Split the images string into an array of filenames
                             $images = explode(',', $product['images']);
@@ -249,7 +256,8 @@ if($select_cart > 0){
                             <input type="hidden" name="product_image" value="<?php echo $images[0] ?>">
                             <img src="dashboard/images/<?php echo $images[0] ?>" alt="#" />
                             <div class="button">
-                                <button type="submit" name="add_to_cart" class="btn"><i class="lni lni-cart"></i> Add to
+                                <button type="submit" name="add_to_cart" class="btn add_to_cart"><i
+                                        class="lni lni-cart"></i> Add to
                                     Cart</button>
                             </div>
                         </div>
@@ -259,18 +267,18 @@ if($select_cart > 0){
                                 <a
                                     href="product-details.php?id=<?php echo $product['id'] ?>"><?php echo $product['name']?></a>
                             </h4>
-                            <ul class="review">
+                            <ul class="review" style="padding: 0;">
                                 <?php
                                     // Display filled stars based on the number of stars
                                     $filledStars = intval($product['stars']);
                                     
                                     for ($i = 0; $i < $filledStars; $i++) {
-                                        echo '<li><i class="lni lni-star-filled"></i></li>';
+                                        echo '<li style="font-size: larger;"><i class="lni lni-star-filled"></i></li>';
                                     }
                                     // Display empty stars for the remaining
                                     $emptyStars = 5 - $filledStars;
                                     for ($i = 0; $i < $emptyStars; $i++) {
-                                        echo '<li><i class="lni lni-star"></i></li>';
+                                        echo '<li > <i class="lni lni-star"></i></li>';
                                     }
                                     ?>
                                 <li><span><?php echo $product['stars']?>.0 Review(s)</span></li>
