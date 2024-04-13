@@ -10,10 +10,6 @@ body {
   overflow-x: hidden;
   font-size: 14px;
 }
-.error {
-  border-color: red;
-  background-color: #000;
-}
 
 p {
   margin: 0;

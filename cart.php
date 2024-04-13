@@ -1,4 +1,12 @@
-<?php include "style/header.php"?>;
+<?php include "style/header.php";
+
+
+$user_id = null;
+if (isset($_SESSION["login_users"]) && !empty($_SESSION["login_users"])){
+    $data = $_SESSION["login_users"];
+    $user_id =$data['id'];
+}
+?>;
 
 
 <div class="shopping-cart section">
@@ -29,7 +37,7 @@
             <?php
                           $total_price = 0;
                         // لام لاسترداد السجلات كمصفوفة
-                          $cart_query = $con->query("SELECT * FROM `cart`");
+                        $cart_query = $con->query("SELECT * FROM `cart` WHERE user_id ='$user_id'");
                           
                            if ($cart_query) {
                               // التأكد من أن النتائج غير فارغة

@@ -1,10 +1,11 @@
 <?php 
 include "style/header.php";
-// session_start();
+
 if (isset($_SESSION["login_users"]) && !empty( $_SESSION["login_users"])){
 $user_id = $_SESSION["login_users"]['id'];
-echo$user_id;
 }
+
+
 
 
 
@@ -21,7 +22,7 @@ if ($cart_query) {
         }
     } else {
   
-        echo "No items in cart";
+        // $messages =  "No items in cart";
     }
 } else {
 

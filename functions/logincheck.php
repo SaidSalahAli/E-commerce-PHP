@@ -15,12 +15,18 @@ if ($num_email >0){
     if(password_verify($password,$pas_hash)){
         $_SESSION["login_users"] = $date;
         header("Location:../index.php");
-
+        $_SESSION['message'] = 'Hello'." ".$date['name'];
+        $_SESSION['messageClass'] = 'alert-success';
  
     }else{
-     header("Location:../login.php?ms=Your Passord or Email incorrect");
+     header("Location:../login.php");
+     $_SESSION['message'] = 'Your Passord or Email incorrect';
+     $_SESSION['messageClass'] = 'alert-warning ';
     }
 }else{
-    header("Location:../login.php?ms=Your Passord or Email incorrect");
+    
+    header("Location:../login.php");
+    $_SESSION['message'] = 'Your Passord or Email incorrect';
+    $_SESSION['messageClass'] = 'alert-warning ';
 
 }

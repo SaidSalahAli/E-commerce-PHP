@@ -1,11 +1,11 @@
 <?php
-session_start();
 include "style/header.php";
-if (!isset($_SESSION["login_users"])){
-   header("Location:login.php?ms=login first");
+if (!isset($_SESSION["login_users"]) && empty($_SESSION["login_users"])){
+    header("Location:login.php?ms=login first");
+   exit; 
 };
 
-$data_user =$_SESSION["login_users"];
+$data_user =$_SESSION["login_users"]; 
 
 $name_parts = explode(' ', $data_user['name']);
 

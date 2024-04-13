@@ -1,3 +1,5 @@
+@import "https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;600;700;800&amp;display=swap";
+
 .error {
   display: block;
   width: 100%;
@@ -15,6 +17,23 @@
   border-radius: 0.25rem;
   transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
 }
+.custom-alert {
+  position: absolute;
+  top: 89%;
+  left: 2%;
+  bottom: 0%;
+  transform: translateY(0%);
+  z-index: 1000;
+  width: 80%;
+  max-width: 226px;
+  font-size: 12px;
+}
+
+@media (max-width: 767.98px) {
+  .custom-alert {
+    font-size: 12px;
+  }
+}
 
 .alert-dangerr {
   width: 100%;
@@ -25,7 +44,7 @@
   font-size: small;
   text-align: center;
 }
-@import "https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;600;700;800&amp;display=swap";
+
 html {
   scroll-behavior: smooth;
 }
@@ -36,10 +55,6 @@ body {
   color: #888;
   overflow-x: hidden;
   font-size: 14px;
-}
-.error {
-  border-color: red;
-  background-color: #000;
 }
 
 p {

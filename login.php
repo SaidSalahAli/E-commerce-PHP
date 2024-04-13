@@ -1,16 +1,15 @@
 <?php
-ob_start(); // بداية التخزين المؤقت للمخرجات
+ // بداية التخزين المؤقت للمخرجات
 
 // session_start();
 include "style/header.php";
-
+ob_start();
 if (isset($_SESSION["login_users"])){
     header("Location:index.php");
     exit; // يجب على البرنامج المصدر القادم من هنا بعد توجيه الرأس
 }
 
-// الإرشاد عندما يكون غير مضمون
-ob_end_flush(); // نهاية التخزين المؤقت للمخرجات
+ob_end_flush(); 
 ?>
 
 

@@ -1,7 +1,5 @@
 <?php 
 session_start();
-
-
 include "functions/connect.php";
 $user_id = null;
 if (isset($_SESSION["login_users"]) && !empty($_SESSION["login_users"])){
@@ -21,7 +19,7 @@ $all_categories = array();
 while ($row = $all_categories_query->fetch_assoc()) {
     $all_categories[] = $row['category'];
 }
-
+$message ='';
 
 
 
@@ -148,7 +146,7 @@ while ($row = $all_categories_query->fetch_assoc()) {
             <div class="container">
                 <div class="row align-items-center">
                     <div class="col-lg-3 col-md-3 col-7">
-                        <a class="navbar-brand" href="index-2.html">
+                        <a class="navbar-brand" href="index.php">
                             <img src="assets/images/logo/logo.svg" alt="Logo" />
                         </a>
                     </div>
@@ -254,7 +252,7 @@ while ($row = $all_categories_query->fetch_assoc()) {
                                                 <span class="total-amount">$<?php echo $total_price?></span>
                                             </div>
                                             <div class="button">
-                                                <a href="checkout.html" class="btn animate">Checkout</a>
+                                                <a href="checkout.php" class="btn animate">Checkout</a>
                                             </div>
                                         </div>
                                     </div>
@@ -310,12 +308,12 @@ while ($row = $all_categories_query->fetch_assoc()) {
                                                 <a href="about-us.html">About Us</a>
                                             </li>
                                             <li class="nav-item"><a href="faq.html">Faq</a></li>
-                                            <li class="nav-item"><a href="login.html">Login</a></li>
+                                            <li class="nav-item"><a href="login.php">Login</a></li>
                                             <li class="nav-item">
-                                                <a href="register.html">Register</a>
+                                                <a href="register.php">Register</a>
                                             </li>
                                             <li class="nav-item">
-                                                <a href="mail-success.html">Mail Success</a>
+                                                <a href="mail-success.php">Mail Success</a>
                                             </li>
                                             <li class="nav-item">
                                                 <a href="404.html">404 Error</a>
@@ -389,3 +387,53 @@ while ($row = $all_categories_query->fetch_assoc()) {
             </div>
         </div>
     </header>
+    <?php
+if(isset($_SESSION['message'])) { 
+    $message = $_SESSION['message'];
+    $messageClass = isset($_SESSION['messageClass']) ? $_SESSION['messageClass'] : 'alert-warning';
+    $messageId = uniqid('message_'); // Generate unique message ID
+    unset($_SESSION['message']); // لحذف الرسالة بعد عرضها للمستخدم
+    unset($_SESSION['messageClass']); // لحذف الكلاس بعد عرضه للمستخدم
+    
+    // Check if there was an error
+
+    // echo $isError;
+    $messageText = $messageClass =="alert-success" ?'Success ..': 'Ops..!! ';
+?>
+    <div id="<?php echo $messageId; ?>"
+        class="custom-alert alert <?php echo $messageClass; ?> alert-dismissible fade show" role="alert" style=" 
+           position: fixed;
+    top: 12%;
+    /* left: 2%; */
+    bottom: 76%;
+    transform: translateX(5%);
+    z-index: 1000;
+    width: 80%;
+    max-width: 226px;
+    font-size: 12px;">
+        <strong><?php echo $messageText; ?></strong> <?php echo $message; ?>
+        <button type="button" class="close" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <script>
+    // Find the message element
+    var messageElement = document.getElementById("<?php echo $messageId; ?>");
+    // Find the close button within the message
+    var closeButton = messageElement.querySelector(".close");
+    // Add click event listener to the close button
+    closeButton.addEventListener("click", function() {
+        // Hide the message when the close button is clicked
+        messageElement.style.display = "none";
+    });
+
+    function closeMessage(messageId) {
+        var messageElement = document.getElementById(messageId);
+        messageElement.style.display = "none";
+    }
+    // Delay hiding the message after 3 seconds
+    setTimeout(function() {
+        messageElement.style.display = "none";
+    }, 3000); // 3000 milliseconds = 3 seconds
+    </script>
+    <?php } ?>

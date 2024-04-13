@@ -1,24 +1,4 @@
 <script>
-$('.search').on('input', function() {
-    let search = $(this).val(); // القيمة المدخلة في حقل البحث
-    let category = '<?php echo $name_category; ?>'; // قيمة الفئة المحددة
-
-    // إرسال البيانات إلى صفحة PHP باستخدام AJAX
-    $.ajax({
-        url: 'product-grids.php', // المسار إلى صفحة PHP لمعالجة البحث
-        type: 'GET',
-        data: {
-            search: search,
-            category: category
-        }, // البيانات المرسلة: قيمة البحث والفئة
-        success: function(response) {
-            // يمكنك تحديث العرض بناءً على الاستجابة التي تم استردادها من صفحة PHP
-            // على سبيل المثال:
-            $('.product-grid').html(response); // قم بتحديث العنصر الذي يعرض المنتجات
-        }
-    });
-});
-
 $('.send_register').submit(function(e) {
     e.preventDefault();
     let first_name = $('.first_name').val();
@@ -40,8 +20,8 @@ $('.send_register').submit(function(e) {
     } else {
         $('.first_name').removeClass('error').addClass('form-control');
         $('.first_name').next('.error-message').hide();
-
     }
+
 
     if (!last_name) {
         $('.last_name').addClass('error').removeClass('form-control');
@@ -66,33 +46,43 @@ $('.send_register').submit(function(e) {
         $('.e_mail').next('.error-message').text('Please enter a valid email').show();
 
 
-        return; // Stop form submission if email is invalid
+        // return; // Stop form submission if email is invalid
     } else {
         $('.e_mail').removeClass('error').addClass('form-control');
         $('.e_mail').next('.error-message').hide();
     }
+    // Check other fields similarly...
+
     if (password === confirm_password) {
-
-
-
-        // Remove error classes if passwords match and password length is greater than or equal to 8
-        $('.password').removeClass('error').addClass('form-control');
-        $('.confirm_password').removeClass('error').addClass('form-control');
-        $('.password').next('.error-message').hide();
-        $('.confirm_password').next('.error-message').hide();
-
-
-
         // Check password length
         if (password.length < 8) {
             // Show error message for password length
             $('.password').addClass('error').removeClass('form-control');
             $('.confirm_password').addClass('error').removeClass('form-control');
-            $('.password').next('.error-message').text(
-                    'Password must be at least 8 characters long')
+            $('.password').next('.error-message').text('Password must be at least 8 characters long').show();
+            $('.confirm_password').next('.error-message').text('Password must be at least 8 characters long')
                 .show();
-            $('.confirm_password').next('.error-message').text(
-                'Password must be at least 8 characters long').show();
+        } else {
+            // Remove error classes if passwords match and password length is greater than or equal to 8
+            $('.password').removeClass('error').addClass('form-control');
+            $('.confirm_password').removeClass('error').addClass('form-control');
+            $('.password').next('.error-message').hide();
+            $('.confirm_password').next('.error-message').hide();
+
+            // Proceed with form submission if all fields are valid
+            if (first_name && last_name && e_mail && password && confirm_password && phone_number) {
+                $.post('functions/users/add_users.php', {
+                        name: full_name,
+                        email: e_mail,
+                        password: password,
+                        prive: null,
+                        gender: 1,
+                    },
+                    function(data) {
+                        $('.valCall').html(data);
+                        $('.send_register')[0].reset();
+                    });
+            }
         }
     } else {
         // Show error message for password mismatch
@@ -101,31 +91,12 @@ $('.send_register').submit(function(e) {
         $('.confirm_password').next('.error-message').text('Passwords do not match').show();
         $('.password').next('.error-message').text('Passwords do not match').show();
     }
-
-
-    if (first_name && last_name && e_mail && password && confirm_password && phone_number) {
-
-        $.post('functions/users/add_users.php', {
-
-                name: full_name,
-                email: e_mail,
-                password: password,
-                prive: null,
-                gender: 1,
-
-            },
-            (function(data) {
-                $('.valCall').html(data);
-                $('.send_register')[0].reset();
-            }))
-    }
-    // Check if passwords match
 });
+</script>
 
 
-$('.add_to_cart').click(function() {
-    toastr.info('Are you the 6 fingered man?')
+<script>
 
 
-})
+    
 </script>
